@@ -50,7 +50,16 @@ app.MapRazorPages();
 
 app.MapGet("/", async context =>
 {
-    context.Response.Redirect("/Account/Login");
+    // Redirect to Account/Login if the user is not authenticated
+    if (!context.User.Identity.IsAuthenticated)
+    {
+        context.Response.Redirect("/Account/Login");
+    }
+    else
+    {
+        context.Response.Redirect("/Tasks/Tasks");
+    }
+
     await System.Threading.Tasks.Task.CompletedTask;
 });
 
