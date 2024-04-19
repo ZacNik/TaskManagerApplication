@@ -143,7 +143,7 @@ namespace TaskManagerApplication.Areas.Identity.Pages.Account.Manage
             }
         }
 
-        private async Task LoadSharedKeyAndQrCodeUriAsync(User user)
+        private async Task<IActionResult> LoadSharedKeyAndQrCodeUriAsync(User user)
         {
             // Load the authenticator key & QR code URI to display on the form
             var unformattedKey = await _userManager.GetAuthenticatorKeyAsync(user);
@@ -157,6 +157,7 @@ namespace TaskManagerApplication.Areas.Identity.Pages.Account.Manage
 
             var email = await _userManager.GetEmailAsync(user);
             AuthenticatorUri = GenerateQrCodeUri(email, unformattedKey);
+            return Page();
         }
 
         private string FormatKey(string unformattedKey)

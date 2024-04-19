@@ -6,12 +6,27 @@
 
 <h1>Task List</h1>
 
+<!-- Search form for filtering tasks -->
+<form method="get" class="form-inline mb-3">
+    <input type="text" name="currentFilter" class="form-control mr-2" placeholder="Search..." value="@Model.CurrentFilter" />
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
+<!-- Table for tasks list -->
 <table class="table">
     <thead>
         <tr>
-            <th>Title</th>
+            <th>
+                <a asp-route-sortOrder="@((Model.SortOrder == "title") ? "title_desc" : "title")">
+                    Title
+                </a>
+            </th>
             <th>Description</th>
-            <th>Priority</th>
+            <th>
+                <a asp-route-sortOrder="@((Model.SortOrder == "priority") ? "priority_desc" : "priority")">
+                    Priority
+                </a>
+            </th>
             <th>Due Date</th>
             <th>Actions</th>
         </tr>
@@ -32,3 +47,16 @@
         }
     </tbody>
 </table>
+
+<!-- Pagination controls -->
+<div class="pagination">
+    @if (Model.PageNumber > 1)
+    {
+        <a asp-route-pageNumber="@(Model.PageNumber - 1)" asp-route-currentFilter="@Model.CurrentFilter" asp-route-sortOrder="@Model.SortOrder" class="btn btn-secondary mr-2">Previous</a>
+    }
+    <span>Page @Model.PageNumber</span>
+    @if (Model.Tasks.Count() == Model.PageSize)
+    {
+        <a asp-route-pageNumber="@(Model.PageNumber + 1)" asp-route-currentFilter="@Model.CurrentFilter" asp-route-sortOrder="@Model.SortOrder" class="btn btn-secondary ml-2">Next</a>
+    }
+</div>

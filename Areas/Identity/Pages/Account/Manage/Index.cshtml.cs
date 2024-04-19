@@ -61,7 +61,7 @@ namespace TaskManagerApplication.Areas.Identity.Pages.Account.Manage
             public string PhoneNumber { get; set; }
         }
 
-        private async Task LoadAsync(User user)
+        private async Task<IActionResult> LoadAsync(User user)
         {
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
@@ -72,6 +72,7 @@ namespace TaskManagerApplication.Areas.Identity.Pages.Account.Manage
             {
                 PhoneNumber = phoneNumber
             };
+            return Page();
         }
 
         public async Task<IActionResult> OnGetAsync()

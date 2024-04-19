@@ -7,38 +7,24 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 
+// Add the DbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<AppDbContext>();
+// Configure Identity and role services
+builder.Services.AddDefaultIdentity<User>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = true; // Configure account confirmation
+    // Additional options can be set here...
+})
+.AddRoles<IdentityRole>() // Enable roles
+.AddEntityFrameworkStores<AppDbContext>();
 
+// Configure scoped services
 builder.Services.AddScoped<TaskService>();
 
-builder.Services.AddIdentity<User, IdentityRole>(options =>
-{
-    // Configure password settings
-    options.Password.RequireDigit = true;
-    options.Password.RequireLowercase = true;
-    options.Password.RequireUppercase = true;
-    options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequiredLength = 10;
-})
-    .AddEntityFrameworkStores<AppDbContext>()
-    .AddDefaultTokenProviders();
-
+// Add authentication middleware
 builder.Services.AddAuthentication();
-
-builder.Services.Configure<IdentityOptions>(options =>
-{
-    // Configure lockout settings
-    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
-    options.Lockout.MaxFailedAccessAttempts = 5;
-    options.Lockout.AllowedForNewUsers = true;
-
-    // Configure user settings
-    options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+!";
-    options.User.RequireUniqueEmail = true;
-});
 
 var app = builder.Build();
 
@@ -60,6 +46,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 
+app.MapRazorPages();
 
 app.MapGet("/", async context =>
 {
@@ -67,16 +54,12 @@ app.MapGet("/", async context =>
     await System.Threading.Tasks.Task.CompletedTask;
 });
 
-app.MapRazorPages();
 
+// Apply pending migrations
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-
-    // Get the DbContext
     var dbContext = services.GetRequiredService<AppDbContext>();
-
-    // Apply any pending migrations
     dbContext.Database.Migrate();
 }
 

@@ -74,7 +74,7 @@ namespace TaskManagerApplication.Areas.Identity.Pages.Account.Manage
             public string NewEmail { get; set; }
         }
 
-        private async Task LoadAsync(User user)
+        private async Task<IActionResult> LoadAsync(User user)
         {
             var email = await _userManager.GetEmailAsync(user);
             Email = email;
@@ -85,6 +85,7 @@ namespace TaskManagerApplication.Areas.Identity.Pages.Account.Manage
             };
 
             IsEmailConfirmed = await _userManager.IsEmailConfirmedAsync(user);
+            return Page();
         }
 
         public async Task<IActionResult> OnGetAsync()
