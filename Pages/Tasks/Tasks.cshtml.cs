@@ -32,10 +32,12 @@ namespace TaskManagerApplication.Pages.Tasks
         
         public async System.Threading.Tasks.Task OnGetAsync(string sortOrder, string currentFilter, int pageNumber)
         {
+            string currentUserId = User.Identity.Name;
+
             SortOrder = sortOrder ?? "";
             CurrentFilter = currentFilter ?? "";
             PageNumber = pageNumber > 0 ? pageNumber : 1;
-            IQueryable<Models.Task> taskQuery = _dbContext.Tasks;
+            IQueryable<Models.Task> taskQuery = _dbContext.Tasks.Where(t => t.UserId == currentUserId);
 
             // Filtering
             if (!string.IsNullOrEmpty(CurrentFilter))
@@ -66,7 +68,7 @@ namespace TaskManagerApplication.Pages.Tasks
                 .Take(PageSize)
                 .ToListAsync();
 
-            Tasks = await _dbContext.Tasks.ToListAsync(); // Loading tasks from the database
+            
             
         }
     }

@@ -53,7 +53,7 @@ app.MapGet("/", async context =>
     // Redirect to Account/Login if the user is not authenticated
     if (!context.User.Identity.IsAuthenticated)
     {
-        context.Response.Redirect("/Account/Login");
+        context.Response.Redirect("/Identity/Account/Login");
     }
     else
     {
