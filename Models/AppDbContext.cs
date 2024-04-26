@@ -15,10 +15,10 @@ namespace TaskManagerApplication.Models
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<User>()
-                .HasMany(u => u.Tasks)
-                .WithOne(t => t.User)
-                .HasForeignKey(t => t.UserId);
+            //modelBuilder.Entity<User>()
+            //    .HasMany(u => u.Tasks)
+            //    .WithOne(t => t.User)
+            //    .HasForeignKey(t => t.UserId);
         }
     }
 }

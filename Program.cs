@@ -15,7 +15,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddDefaultIdentity<User>(options =>
 {
     options.SignIn.RequireConfirmedAccount = true; // Configure account confirmation
-    // Additional options can be set here...
+                                                   // Additional options can be set here...
 })
 .AddRoles<IdentityRole>() // Enable roles
 .AddEntityFrameworkStores<AppDbContext>();

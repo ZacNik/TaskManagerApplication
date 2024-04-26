@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using TaskManagerApplication.Models;
-
+using System.Threading.Tasks;
+using System.Diagnostics;
+using System.Security.Claims;
 
 namespace TaskManagerApplication.Pages.Tasks
 {
@@ -32,12 +34,21 @@ namespace TaskManagerApplication.Pages.Tasks
         
         public async System.Threading.Tasks.Task OnGetAsync(string sortOrder, string currentFilter, int pageNumber)
         {
-            string currentUserId = User.Identity.Name;
+            string currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            Debug.WriteLine($"Current User ID: {currentUserId}");
+            Debug.WriteLine($"Sort Order: {sortOrder}");
+            Debug.WriteLine($"Current Filter: {currentFilter}");
+            Debug.WriteLine($"Page Number: {pageNumber}");
 
             SortOrder = sortOrder ?? "";
             CurrentFilter = currentFilter ?? "";
             PageNumber = pageNumber > 0 ? pageNumber : 1;
-            IQueryable<Models.Task> taskQuery = _dbContext.Tasks.Where(t => t.UserId == currentUserId);
+            IQueryable<TaskManagerApplication.Models.Task> taskQuery = _dbContext.Tasks.Where(t => t.UserId == currentUserId);
+
+            // Debugging: Output generated SQL query to debug window
+            Debug.WriteLine($"Generated SQL query: {taskQuery.ToQueryString()}");
+
 
             // Filtering
             if (!string.IsNullOrEmpty(CurrentFilter))
@@ -68,8 +79,8 @@ namespace TaskManagerApplication.Pages.Tasks
                 .Take(PageSize)
                 .ToListAsync();
 
-            
-            
+            Debug.WriteLine($"Number of tasks retrieved: {Tasks.Count()}");
+
         }
     }
 }

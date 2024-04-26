@@ -9,7 +9,7 @@
         public DateTime DueDate { get; set; }
         public bool IsCompleted { get; set; }
         public string UserId { get; set; }
-        public User User { get; set; }
+        //public User User { get; set; }
     }
 
     public enum Priority
