@@ -1,4 +1,4 @@
-# TaskManagerApplication
+# Zachary Nikkel's Task Management System
 
 Challenge/Context: This project aimed to create a task management system to help users organize and prioritize their tasks efficiently. The challenge was to develop a web-based application accessible from any device with an internet connection, while also ensuring user authentication, data security, and seamless task management capabilities.
 
