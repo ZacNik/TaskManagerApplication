@@ -9,13 +9,14 @@ namespace TaskManagerApplication.Pages.Tasks
     public class EditModel : PageModel
     {
         private readonly AppDbContext _dbContext;
-
+        private readonly ILogger<EditModel> _logger;
         [BindProperty]
         public TaskManagerApplication.Models.Task Task { get; set; }
 
-        public EditModel(AppDbContext dbContext)
+        public EditModel(AppDbContext dbContext, ILogger<EditModel> logger)
         {
             _dbContext = dbContext;
+            _logger = logger;
         }
 
         public async Task<IActionResult> OnGetAsync(int id)
@@ -34,6 +35,12 @@ namespace TaskManagerApplication.Pages.Tasks
         {
             if (!ModelState.IsValid)
             {
+                _logger.LogWarning("Form data is invalid.");
+                // Log model state errors
+                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    _logger.LogError("ModelState error: {ErrorMessage}", error.ErrorMessage);
+                }
                 return Page();
             }
 
@@ -49,7 +56,18 @@ namespace TaskManagerApplication.Pages.Tasks
             taskToUpdate.Priority = Task.Priority;
             taskToUpdate.DueDate = Task.DueDate;
 
-            await _dbContext.SaveChangesAsync();
+            try
+            {
+                await _dbContext.SaveChangesAsync();
+                _logger.LogInformation("Task updated successfully with Id: {TaskId}", Task.Id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while saving the task.");
+                // Log or handle the exception as necessary
+                ModelState.AddModelError(string.Empty, "An error occurred while saving the task.");
+                return Page();
+            }
 
             return RedirectToPage("./Tasks");
         }
