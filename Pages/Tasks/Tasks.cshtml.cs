@@ -41,7 +41,7 @@ namespace TaskManagerApplication.Pages.Tasks
             Debug.WriteLine($"Current Filter: {currentFilter}");
             Debug.WriteLine($"Page Number: {pageNumber}");
 
-            SortOrder = sortOrder ?? "";
+            SortOrder = sortOrder ?? "dueDate";
             CurrentFilter = currentFilter ?? "";
             PageNumber = pageNumber > 0 ? pageNumber : 1;
             IQueryable<TaskManagerApplication.Models.Task> taskQuery = _dbContext.Tasks.Where(t => t.UserId == currentUserId);

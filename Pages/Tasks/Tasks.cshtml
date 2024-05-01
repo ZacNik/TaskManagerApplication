@@ -8,45 +8,55 @@
 
 <!-- Search form for filtering tasks -->
 <form method="get" class="form-inline mb-3">
-    <input type="text" name="currentFilter" class="form-control mr-2" placeholder="Search..." value="@Model.CurrentFilter" />
+    <input type="text" name="currentFilter" class="form-control mr-2" placeholder="Search by title..." value="@Model.CurrentFilter" />
     <button type="submit" class="btn btn-primary">Search</button>
 </form>
 
+<!-- Sorting options -->
+<div class="mb-3">
+    <div class="row align-items-center">
+        <div class="col-md-4 mb-3">
+            <label for="sortBy" class="mr-2">Sort by:</label>
+            <select id="sortBy" class="form-control">
+                <option value="" selected>- - -</option>
+                <option value="title">Title</option>
+                <option value="priority">Priority</option>
+            </select>
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="sortOrder" class="mr-2">Sort order:</label>
+            <select id="sortOrder" class="form-control">
+                <option value="" selected>- - -</option>
+                <option value="asc">Ascending</option>
+                <option value="desc">Descending</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <button id="sortButton" class="btn btn-primary btn-block">Sort</button>
+        </div>
+    </div>
+</div>
+
 <!-- Table for tasks list -->
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                <a asp-route-sortOrder="@((Model.SortOrder == "title") ? "title_desc" : "title")">
-                    Title
-                </a>
-            </th>
-            <th>Description</th>
-            <th>
-                <a asp-route-sortOrder="@((Model.SortOrder == "priority") ? "priority_desc" : "priority")">
-                    Priority
-                </a>
-            </th>
-            <th>Due Date</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var task in Model.Tasks)
-        {
-            <tr>
-                <td>@task.Title</td>
-                <td>@task.Description</td>
-                <td>@task.Priority</td>
-                <td>@task.DueDate.ToShortDateString()</td>
-                <td>
-                    <a asp-page="./Edit" asp-route-id="@task.Id">Edit</a> |
-                    <a asp-page="./Delete" asp-route-id="@task.Id">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="row">
+    @foreach (var task in Model.Tasks)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">@task.Title</h5>
+                    <p class="card-text">@task.Description</p>
+                    <p class="card-text">Priority: <span class="badge badge-@(task.Priority)">@task.Priority</span></p>
+                    <p class="card-text">Due Date: @task.DueDate.ToShortDateString()</p>
+                    <div class="btn-group">
+                        <a asp-page="./Edit" asp-route-id="@task.Id" class="btn btn-primary">Edit</a>
+                        <a asp-page="./Delete" asp-route-id="@task.Id" class="btn btn-danger">Delete</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
 
 <!-- Pagination controls -->
 <div class="pagination">
@@ -60,3 +70,33 @@
         <a asp-route-pageNumber="@(Model.PageNumber + 1)" asp-route-currentFilter="@Model.CurrentFilter" asp-route-sortOrder="@Model.SortOrder" class="btn btn-secondary ml-2">Next</a>
     }
 </div>
+
+@section Scripts {
+    <script>
+        // Handle sorting button click
+        document.getElementById("sortButton").addEventListener("click", function () {
+            var sortBy = document.getElementById("sortBy").value;
+            var sortOrder = document.getElementById("sortOrder").value;
+            if (sortBy && sortOrder) {
+                window.location.href = "/Tasks/Tasks?sortOrder=" + sortBy + "_" + sortOrder;
+            }
+        });
+    </script>
+}
+
+<style>
+    .badge-Low {
+        background-color: #007bff;
+        color: #fff;
+    }
+
+    .badge-Medium {
+        background-color: #28a745;
+        color: #fff;
+    }
+
+    .badge-High {
+        background-color: #dc3545;
+        color: #fff;
+    }
+</style>
